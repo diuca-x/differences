@@ -1,10 +1,10 @@
-# back_front_boilerplate
+# Difference game
 
 -------------------------------------
 Getting Started
 To get started, you will need to have Python 3.8+ installed. You can install the dependencies by running the following commands:
 
-```cd back```
+```cd differences/back```
 
 ```poetry install```
 
@@ -18,7 +18,7 @@ Then for starting the backend
 
 Once the dependencies are installed, you can start the front by running the following commands:
 
-```cd trivia-front```
+```cd differences```
 
 ```npm install```
 
