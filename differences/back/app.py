@@ -1,13 +1,16 @@
 
 from flask import Flask, jsonify
 import os
-from api.views import blueprint
+from api.views import blueprint, auth_blueprint
 #--- env
 from dotenv import load_dotenv
 #--- database
 from extensions import db
 from extensions import migrate
 from extensions import cors
+from extensions import jwt
+
+
 
 
 
@@ -17,12 +20,14 @@ load_dotenv()
 
 app = Flask(__name__)
 app.register_blueprint(blueprint=blueprint)
+app.register_blueprint(blueprint=auth_blueprint)
 app.config.from_object("config")
 
 
 db.init_app(app)
 migrate.init_app(app,db)
 cors.init_app(app, resources={r"/api/*"})
+jwt.init_app(app)
 #debug = os.environ.get("FLASK_DEBUG", False)
 
 if __name__ == "__main__":

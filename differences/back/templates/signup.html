@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <title>Signup</title>
+</head>
+ 
+<body style="background-color: gray;">
+    <h1>Signup</h1>
+    <form id="signup-form"  enctype="application/json">
+        <input type="text" name="user" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <input type="password" name="rep_password" placeholder="Repeat Password" required>
+        <input type="submit" value="submit">
+    </form>
+    
+
+    <script>
+        
+
+        document.getElementById("signup-form").addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+            const token = localStorage.getItem("jwt-token");
+            console.log(token)
+            const response = await fetch("/auth/signupator", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json()
+            alert(result.msg);
+            if (response.status == 401){
+                window.location.href = "/auth/login"; 
+            }
+        });
+    </script>
+</body>
+ 
+</html>
