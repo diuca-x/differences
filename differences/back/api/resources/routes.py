@@ -17,7 +17,6 @@ from io import BytesIO
 
 #Examples of calls
 
-#no se que hago
 
 class Compareimg(Resource): #to get all questions, or create a new one
     def get(self):
@@ -25,9 +24,9 @@ class Compareimg(Resource): #to get all questions, or create a new one
 
     def post(self):
         data = request.json
-        url1 = data.get("url1")
-        url2 = data.get("url2")
-        url3 = data.get("url3")
+        url1 = data.get("url1") # original img
+        url2 = data.get("url2") # img with differences marked
+        url3 = data.get("url3") # img with differences not marked
 
         response1 = requests.get(url1)
         response2 = requests.get(url2)
@@ -49,24 +48,25 @@ class Compareimg(Resource): #to get all questions, or create a new one
         difference = cv2.absdiff(image1, image2)
         gray = cv2.cvtColor(difference, cv2.COLOR_BGR2GRAY)
         _, thresholded = cv2.threshold(gray, 30, 255, cv2.THRESH_BINARY)
-
+        
         contours, _ = cv2.findContours(thresholded, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        
-        diff_coordinates = []
-        for contour in contours:
-            x, y, w, h = cv2.boundingRect(contour)
-            diff_coordinates.append((x, y, x + w, y + h))
+        #-----------------------------------------------------------------------------------------------------------
+        #diff_coordinates = []
+        #for contour in contours:
+            #x, y, w, h = cv2.boundingRect(contour)
+            #diff_coordinates.append((x, y, x + w, y + h))
 
-        for (x1, y1, x2, y2) in diff_coordinates:
-            cv2.rectangle(image1, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        #for (x1, y1, x2, y2) in diff_coordinates:
+         #   cv2.rectangle(image3, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-        # Save or display the image with bounding boxes
-        cv2.imwrite('image_with_bboxes.png', image3)
-        
+        #Save or display the image with bounding boxes
+        #cv2.imshow('image_with_bboxes.png', image3)
+        #----------------------------------------------------------------------------------------------------------- this draws rectangles instead of wacky circles
+
         cv2.drawContours(image3, contours, -1, (0, 255, 0), 2)
         cv2.imshow('Image with Contours', image3)
-
-
+        cv2.imshow('og', image1)
+        cv2.imshow('differences', image2)
 
         cv2.waitKey(0)
         cv2.destroyAllWindows()
@@ -87,14 +87,15 @@ class Compareimg(Resource): #to get all questions, or create a new one
                 cX, cY = 0, 0
             
             # Append the center coordinates to the list
-            center_coordinates.append((cX, cY))
+            if cX != 0 and cY != 0:
+                center_coordinates.append((cX, cY))
 
             # Print the center coordinates of each contour
         for i, (cX, cY) in enumerate(center_coordinates):
             print(f"Contour {i + 1}: Center = ({cX}, {cY})")
 
         
-        return jsonify("asd")
+        return jsonify({"coordinates" : center_coordinates})
     
 #class specificQuestion(Resource): 
     
