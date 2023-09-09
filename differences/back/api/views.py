@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template
-from api.admin_routes import Loginator, Signupator
+from api.admin_routes import Loginator, Signupator,Token_validator
 from flask_restful import Api
 
 from api.resources.routes import Compareimg
@@ -16,7 +16,7 @@ api.add_resource(Compareimg, "/compare")
 
 auth.add_resource(Signupator, "/signupator")
 auth.add_resource(Loginator, "/loginator")
-
+auth.add_resource(Token_validator, "/validator")
 
 @auth_blueprint.route("/login")
 def login(): 
@@ -30,3 +30,7 @@ def home():
 @auth_blueprint.route("/signup")
 def signup(): 
      return render_template("signup.html")
+
+@auth_blueprint.route("/img")
+def img_loader():
+    return render_template("img_loader.html")

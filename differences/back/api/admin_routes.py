@@ -72,3 +72,8 @@ class Loginator(Resource): #to get all questions, or create a new one
             
             token = create_access_token(identity=user.id)
             return jsonify({ "token": token, "msg":"login success"})
+    
+class Token_validator(Resource):
+    method_decorators=[jwt_required()]
+    def get(self):
+        pass
