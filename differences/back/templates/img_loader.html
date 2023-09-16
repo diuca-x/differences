@@ -2,7 +2,7 @@
 <html lang="en">
  
 <head>
-    <title>home</title>
+    <title>Img upload</title>
 
     <script>
         
@@ -36,13 +36,66 @@
  
  
 <body style="background-color: gray;">
-    <h1>Home</h1>
+    <h1>Upload excel</h1>
     
-    <a href="{{ url_for('auth.img_loader') }}">Excel</a>
-    <a href="{{ url_for('auth.signup') }}">signup</a>
     
-    <button class="btn" onclick="logoutinator()">Back to login</button>
+        
+        <form  id="excel-form"  enctype="multipart/form-data" >
+            <input type="file" name="file"
+                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" required>
+            <input type="submit" value="submit">
+        </form>
+    
+    <button class="btn my-2" onclick="home_sendinator()" style="margin-top: 3rem;">Back</button>
+
     <script>
+        
+        document.getElementById("excel-form").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            
+
+            const form = event.target;
+            const fileInput = form.querySelector('input[type="file"]');
+
+            let data = new FormData();
+
+            data.append('file', fileInput.files[0]); 
+            
+            const token = localStorage.getItem("jwt-token");
+            if (token == null){
+                alert("User not loged")
+                window.location.href = "/auth/login"; 
+            }
+
+            const response = await fetch("/auth/file_loadinator", {
+                method: "POST",
+                headers: {
+                    
+                    Authorization: `Bearer ${token}`,
+                },
+                body: data
+            });
+
+            console.log(response.status)
+            if(response.status == 200){
+                alert(result.msg);
+                window.location.href = "/auth/home"; 
+            } else if (response.status == 400){
+                alert(result.msg);
+            }else if (response.status > 400){
+                alert(result.msg);
+                window.location.href = "/auth/login"; 
+            }
+
+            const result = await response.json()
+        })
+
+
+        const home_sendinator = () =>{
+            window.location.href = "/auth/home";    
+        }
+
+
         const logoutinator = () =>{
             
             localStorage.clear()

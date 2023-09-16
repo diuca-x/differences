@@ -19,6 +19,7 @@ opencv-python = "^4.8.0.76"
 requests = "^2.31.0"
 flask-jwt-extended = "^4.5.2"
 argon2-cffi = "^23.1.0"
+openpyxl = "^3.1.2"
 
 
 [build-system]

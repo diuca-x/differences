@@ -42,10 +42,12 @@
         <input type="password" name="rep_password" placeholder="Repeat Password" required>
         <input type="submit" value="submit">
     </form>
-    <a href="{{ url_for('auth.home') }}">Back</a>
+    <button class="btn" onclick="home_sendinator()" style="margin-top: 3rem;">Back</button>
 
     <script>
-        
+        const home_sendinator = () =>{
+            window.location.href = "/auth/home"; 
+        }
 
         document.getElementById("signup-form").addEventListener("submit", async (event) => {
             event.preventDefault();
