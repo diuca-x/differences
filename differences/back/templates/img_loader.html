@@ -77,6 +77,8 @@
             });
 
             console.log(response.status)
+            const result = await response.json()
+            
             if(response.status == 200){
                 alert(result.msg);
                 window.location.href = "/auth/home"; 
@@ -87,7 +89,8 @@
                 window.location.href = "/auth/login"; 
             }
 
-            const result = await response.json()
+            
+            console.log(result)
         })
 
 

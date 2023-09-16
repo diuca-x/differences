@@ -215,9 +215,14 @@ class Img_upload(Resource):
             headers = {'Authorization': 'Bearer {}'.format(token)}
             
             response = requests.post(os.environ.get("VITE_BACKEND_URL", False) + "auth/compare", json=difference_to_add, headers=headers)
-
-            print("asd")
+            
+            if (response.status_code >=400):
+                 return make_response(response.json(),400)
+               
+            result = response.json()
             print(response.json())
+            if(len(result.get("coordinates")) < 8):
+                return make_response(jsonify({"msg" : f"Error, only {len(result.get('coordinates'))} where found"}),400)
 
 
         return jsonify({"msg": "added"})
