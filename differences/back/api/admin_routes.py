@@ -7,6 +7,7 @@ from flask_jwt_extended import create_access_token,get_jwt,jwt_required
 
 #---import models
 from models.users import User
+from models.tables import Images
 
 #--- import db
 from extensions import db
@@ -169,7 +170,12 @@ class Compareimg(Resource):
         for i, (cX, cY) in enumerate(center_coordinates):
             print(f"Contour {i + 1}: Center = ({cX}, {cY})")
 
+        for index,i in enumerate(center_coordinates):
        
+            
+            center_coordinates[index] = ','.join(map(str, i))
+            
+        
         return jsonify({"coordinates" : center_coordinates})
     
 
@@ -217,12 +223,15 @@ class Img_upload(Resource):
             response = requests.post(os.environ.get("VITE_BACKEND_URL", False) + "auth/compare", json=difference_to_add, headers=headers)
             
             if (response.status_code >=400):
-                 return make_response(response.json(),400)
+                return make_response(response.json(),400)
                
             result = response.json()
-            print(response.json())
-            if(len(result.get("coordinates")) < 8):
-                return make_response(jsonify({"msg" : f"Error, only {len(result.get('coordinates'))} where found"}),400)
+            coordinates = result.get("coordinates")
+            if(len(coordinates) < 8):
+                return make_response(jsonify({"msg" : f"Error, only {len(coordinates)} where found"}),400)
 
-
+            print(coordinates)
+            to_add = Images(og_url = difference_to_add["url1"], diff_url = difference_to_add["url3"], cor1 = coordinates[0], cor2 = coordinates[1],
+                        cor3 = coordinates[2], cor4 = coordinates[3], cor5 = coordinates[4], cor6 = coordinates[5],
+                        cor7 = coordinates[6], cor8 = coordinates[7] )
         return jsonify({"msg": "added"})
