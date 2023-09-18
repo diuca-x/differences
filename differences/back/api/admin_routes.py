@@ -1,5 +1,6 @@
+from datetime import datetime
 import os
-from flask import jsonify, request, make_response
+from flask import jsonify, request, make_response,render_template
 
 from flask_restful import Resource, abort
 from flask_jwt_extended import create_access_token,get_jwt,jwt_required
@@ -13,8 +14,6 @@ from models.tables import Images
 from extensions import db
 
 
-from flask import  render_template
-
 from extensions import ph
 
 #--- for comparing img 
@@ -27,7 +26,7 @@ from io import BytesIO
 import openpyxl
 from fileinput import filename
 import requests
-import os
+
 
 
 class Signupator(Resource): #to get all questions, or create a new one
@@ -184,9 +183,12 @@ class Img_upload(Resource):
     def post(self):
         token_dic = get_jwt()
         token = token_dic.get("jti")
+
+        
         
         file = request.files['file']
         file.save(file.filename)
+
         wb = openpyxl.load_workbook(file.filename)
         ws = wb.active
 
@@ -198,6 +200,8 @@ class Img_upload(Resource):
             has_text = ws.cell(row=c, column=1).value
             
             if(has_text):
+                if( not ws.cell(row=c,column=1).value or not ws.cell(row=c,column=2).value or not ws.cell(row=c,column=3).value or not ws.cell(row=c,column=4).value):
+                    return make_response(jsonify({"msg" : f"Error, row {c} of the file is missing data"}),400)
                 row_ammount += 1
             c += 1
 
@@ -215,7 +219,6 @@ class Img_upload(Resource):
             difference_to_add["url1"] = ws.cell(row=i,column=1).value    
             difference_to_add["url2"] = ws.cell(row=i,column=2).value        
             difference_to_add["url3"] = ws.cell(row=i,column=3).value 
-                
             difference_to_add["date"] = ws.cell(row=i,column=4).value.strftime('%d/%m/%Y')
             
             headers = {'Authorization': 'Bearer {}'.format(token)}
@@ -231,7 +234,11 @@ class Img_upload(Resource):
                 return make_response(jsonify({"msg" : f"Error, only {len(coordinates)} where found"}),400)
 
             print(coordinates)
+            date_to_add = datetime.strptime(difference_to_add.get("date"), '%d/%m/%Y')
             to_add = Images(og_url = difference_to_add["url1"], diff_url = difference_to_add["url3"], cor1 = coordinates[0], cor2 = coordinates[1],
                         cor3 = coordinates[2], cor4 = coordinates[3], cor5 = coordinates[4], cor6 = coordinates[5],
-                        cor7 = coordinates[6], cor8 = coordinates[7] )
+                        cor7 = coordinates[6], cor8 = coordinates[7], date=date_to_add)
+            db.session.add(to_add)
+            db.session.commit()
+
         return jsonify({"msg": "added"})

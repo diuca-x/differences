@@ -22,3 +22,8 @@ from extensions import db
         #data = request.json
         #pass
     
+class asd(Resource):
+
+    def get(self):
+        a = Images.query.get(1)
+        print(a.serialize())

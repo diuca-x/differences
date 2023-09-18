@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template
 from api.admin_routes import Loginator, Signupator,Token_validator,Compareimg,Img_upload
+
 from flask_restful import Api
 
-from api.resources.routes import *
+from api.resources.routes import asd
 
 blueprint = Blueprint("api", __name__, url_prefix="/api")
 auth_blueprint = Blueprint("auth", __name__, url_prefix="/auth")
@@ -10,6 +11,7 @@ auth_blueprint = Blueprint("auth", __name__, url_prefix="/auth")
 api = Api(blueprint, errors=blueprint.errorhandler)
 auth =  Api(auth_blueprint, errors=auth_blueprint.errorhandler)
 
+api.add_resource(asd, "/asd")
 
 auth.add_resource(Compareimg, "/compare")
 auth.add_resource(Signupator, "/signupator")
