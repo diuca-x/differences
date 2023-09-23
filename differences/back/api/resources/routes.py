@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import jsonify, request, make_response
 from flask_restful import Resource, abort
 
@@ -26,4 +27,18 @@ class asd(Resource):
 
     def get(self):
         a = Images.query.get(1)
-        print(a.serialize())
+        return jsonify(a.serialize())
+    
+class start_game(Resource):
+    def get(self):
+        today_images = Images.query.filter_by(date = datetime.today().replace(hour=0, minute=0, second=0,microsecond=0 )).first()
+        
+        serialized_images = today_images.make_game_img()
+        
+        
+
+        return jsonify(serialized_images)
+
+
+
+

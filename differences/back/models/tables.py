@@ -37,4 +37,13 @@ class Images(db.Model):
             "coors" :[ coors1,coors2,coors3,coors4,coors5,coors6,coors7,coors8],
             "date" : self.date.strftime("%d/%m/%Y")
         }
-    
+    def make_game_img(self):
+        serialized_images = self.serialize()
+        game_coors = []
+
+        for i in serialized_images.get("coors"):
+            game_coors.append({"answered":False, "coors": i})
+            
+
+        serialized_images["coors"] = game_coors
+        return (serialized_images)

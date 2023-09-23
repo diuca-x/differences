@@ -8,7 +8,7 @@ const Home = () =>{
     return(
         <>
             
-            <button class="btn btn-primary" onClick={() => {navigate('/differences', { replace: true })}}>start</button>
+            <button className="btn btn-primary" onClick={() => {navigate('/differences', { replace: true })}}>start</button>
         </>
     )
 }

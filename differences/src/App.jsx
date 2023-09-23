@@ -23,7 +23,7 @@ function App() {
                 <Routes>
                     <Route element={<Home />} path="/" />   
                     <Route element={<Game/>} path='/differences'/>                
-                    <Route element={<h1>Not found!</h1>} />
+                    <Route element={<h1>Not found!</h1>} path='*'/>
                 </Routes>
                 
             

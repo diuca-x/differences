@@ -3,7 +3,7 @@ from api.admin_routes import Loginator, Signupator,Token_validator,Compareimg,Im
 
 from flask_restful import Api
 
-from api.resources.routes import asd
+from api.resources.routes import start_game,asd
 
 blueprint = Blueprint("api", __name__, url_prefix="/api")
 auth_blueprint = Blueprint("auth", __name__, url_prefix="/auth")
@@ -12,6 +12,7 @@ api = Api(blueprint, errors=blueprint.errorhandler)
 auth =  Api(auth_blueprint, errors=auth_blueprint.errorhandler)
 
 api.add_resource(asd, "/asd")
+api.add_resource(start_game, "/start_game")
 
 auth.add_resource(Compareimg, "/compare")
 auth.add_resource(Signupator, "/signupator")
