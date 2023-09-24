@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import resemble from 'resemblejs';
 import '../styles/game.css'
 
@@ -6,6 +6,8 @@ const Game = () => {
   const [image1,setImage1] = useState()
   const [image2,setImage2] = useState()
   const [diff, setDiff] = useState()
+  const imageRef = useRef(null);
+  const canvasRef = useRef(null)
   useEffect(() => {
     (async () => {
       try {
@@ -19,20 +21,57 @@ const Game = () => {
           }
         );
         const result = await response.json();
+        setDiff(result.coors)
+
         const img1 = new Image()
-        img1.onload = () =>{
-          setImage1(img1)
-        }
+        setImage1(img1)
         img1.src = result.og_url
 
         const img2 = new Image()
-        img2.onload = () =>{
-          setImage2(img2)
-        }
+        setImage2(img2)
         img2.src = result.diff_url
+        
+        if (canvasRef.current &&imageRef.current) {
+          const imageRect = imageRef.current.getBoundingClientRect();
+          const canvas = canvasRef.current.getBoundingClientRect();
 
-        setDiff(result.coors)
+          console.log('Image Coordinates:', {
+            top: imageRect.top,
+            left: imageRect.left,
+            right: imageRect.right,
+            bottom: imageRect.bottom,
+            width: imageRect.width,
+            height: imageRect.height,
+          });
 
+          console.log('canvas Coordinates:', {
+            top: canvas.top,
+            left: canvas.left,
+            right: canvas.right,
+            bottom: canvas.bottom,
+            width: canvas.width,
+            height: canvas.height,
+          });
+        }
+        
+        if(canvasRef.current && imageRef.current){
+          
+          const imageRect = imageRef.current.getBoundingClientRect();
+          const canvas = canvasRef.current;
+
+          canvas.width = imageRect.width;
+          canvas.height = imageRect.height;
+
+          canvas.style.position = "absolute";
+          
+          canvas.style.top = `${imageRect.top}px`;
+          canvas.style.left = `${imageRect.left}px`;
+
+          
+
+        }
+        
+        
 
       } catch (error) {
         console.log("Error loading message from backend");
@@ -64,18 +103,41 @@ const Game = () => {
     
     
   }
- 
-  image1? console.log(image1.width):""
+
+  const drawCircle = (x, y) => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+
+    ctx.beginPath();
+    ctx.arc(x, y, 10, 0, Math.PI * 2); // Change the radius (20) as needed
+    ctx.fillStyle = 'blue'; // Change the fill color as needed
+    ctx.fill();
+    ctx.closePath();
+  };
+
+  const handleClick = (event) => {
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    // Call the drawCircle function with the click coordinates
+    drawCircle(mouseX, mouseY);
+  };
+  
+  
+  
 
   return (
     <>
-    <div className='row'>
-      <div className='col-6'>{ image1? <img src={image1.src} className="img-fluid" alt="..." id ="img1"/> : <div className="spinner"></div>}</div>
-      {image1 &&(<canvas id="myCanvas" 
-          width={image1.width}
-          height={image1.height}
-          style={{ position: "absolute", top: image1.offsetTop, left: image1.offsetLeft, border: "1px solid red" }}></canvas>)}
-      <div className='col-6'>{image2?<img src={image2.src} className="img-fluid" alt="..." onClick={e  => {click_registrator(e)}}/>:<div className="spinner"></div>}</div>
+    <div className='row   border' style={{ margin: 0, padding: 0 }}>
+      <div className='col-6 ' style={{ margin: 0, padding: 0 }}>{image1 &&(
+        <img src={image1.src} className="img-fluid" alt="..." ref={imageRef} />
+      )}
+      <canvas id="canvas1" ref={canvasRef} style={{ border: "1px solid red", position: "absolute", }} onClick={handleClick}></canvas>
+      </div>
+      
+      
     </div>
     </>
   );

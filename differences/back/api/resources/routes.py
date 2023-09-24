@@ -32,7 +32,8 @@ class asd(Resource):
 class start_game(Resource):
     def get(self):
         today_images = Images.query.filter_by(date = datetime.today().replace(hour=0, minute=0, second=0,microsecond=0 )).first()
-        
+        if today_images == None:
+            today_images =Images.query.first()
         serialized_images = today_images.make_game_img()
         
         
